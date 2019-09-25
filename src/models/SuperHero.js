@@ -1,5 +1,6 @@
 export default class SuperHero {
-    constructor(name, picture) {
+    constructor(id, name, picture) {
+        this.id = id;
         this.name = name || '';
         this.picture = picture || '/default-superhero.png';
     }

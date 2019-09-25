@@ -1,18 +1,37 @@
 <script>
+  import { onMount } from "svelte";
   import SuperHeroList from "./SuperHeroList.svelte";
   import SuperHeroService from "../services/superhero-service";
 
-  let superheroes;
+  let superheroes, originalSuperHeroes, nameFilter;
 
-  async function searchSuperHeroes() {
+  onMount(async () => {
     let service = new SuperHeroService();
-    superheroes = await service.getAll();
+    superheroes = originalSuperHeroes = await service.getAll();
+  });
+
+  $: {
+    if (nameFilter) {
+      superheroes = originalSuperHeroes.filter(
+        os => os.name.toUpperCase().indexOf(nameFilter.toUpperCase()) !== -1
+      );
+    } else {
+      superheroes = originalSuperHeroes;
+    }
+  }
+
+  function clearFilter() {
+    nameFilter = "";
   }
 </script>
 
 <style>
-
+  .filter-title {
+    margin-bottom: 5px;
+  }
 </style>
 
-<button on:click={searchSuperHeroes}>Search SuperHeroes</button>
+<label class="filter-title" for="name">Search SuperHero:</label>
+<input type="text" name="name" bind:value={nameFilter} />
+<button on:click={clearFilter}>Clear</button>
 <SuperHeroList {superheroes} />

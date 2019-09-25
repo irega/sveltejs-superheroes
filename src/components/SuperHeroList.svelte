@@ -36,7 +36,7 @@
 </style>
 
 <ul>
-  {#each superheroes as superhero}
+  {#each superheroes as superhero (superhero.id)}
     <div class="container">
       <img
         class="picture"
