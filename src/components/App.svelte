@@ -4,11 +4,12 @@
   import SuperHeroService from "../services/superhero-service";
   import Filters from "./Filters.svelte";
   import SuperHeroDetail from "./SuperHeroDetail.svelte";
+  import InformationModal from "./InformationModal.svelte";
 
   let superheroes,
     originalSuperHeroes,
     filters,
-    selectedSuperHero = null;
+    getSuperHeroPromise = null;
 
   const service = new SuperHeroService();
 
@@ -16,8 +17,8 @@
     superheroes = originalSuperHeroes = await service.getAll();
   });
 
-  async function setSelectedSuperHero(event) {
-    selectedSuperHero = await service.getById(event.detail.id);
+  async function getSuperHero(event) {
+    getSuperHeroPromise = service.getById(event.detail.id);
   }
 
   $: {
@@ -32,9 +33,20 @@
 </script>
 
 <Filters on:filtersModified={event => (filters = event.detail.filters)} />
-<SuperHeroList {superheroes} on:superHeroSelected={setSelectedSuperHero} />
-{#if selectedSuperHero !== null}
-  <SuperHeroDetail
-    {selectedSuperHero}
-    on:closeDetail={() => (selectedSuperHero = null)} />
-{/if}
+<SuperHeroList {superheroes} on:superHeroSelected={getSuperHero} />
+
+{#await getSuperHeroPromise}
+  <span />
+{:then selectedSuperHero}
+  {#if selectedSuperHero !== null}
+    <SuperHeroDetail
+      {selectedSuperHero}
+      on:closeDetail={() => (selectedSuperHero = null)} />
+  {/if}
+{:catch error}
+  {#if error.message !== null}
+    <InformationModal on:closeModal={() => (error.message = null)}>
+      {error.message}
+    </InformationModal>
+  {/if}
+{/await}
