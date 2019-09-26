@@ -1,13 +1,5 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-
-  let name;
-  const dispatch = createEventDispatcher();
-
-  function notifyNameModified() {
-    dispatch("filtersModified", { filters: { name } });
-  }
-
+  export let name;
   function clearFilters() {
     name = "";
   }
@@ -20,10 +12,5 @@
 </style>
 
 <label class="filters-title" for="name">Search SuperHero:</label>
-<input
-  type="text"
-  name="name"
-  bind:value={name}
-  on:input={notifyNameModified}
-  on:change={notifyNameModified} />
+<input type="text" name="name" bind:value={name} />
 <button on:click={clearFilters}>Clear</button>

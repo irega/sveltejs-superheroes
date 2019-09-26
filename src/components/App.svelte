@@ -8,7 +8,7 @@
 
   let superheroes,
     originalSuperHeroes,
-    filters,
+    nameFilter = "",
     getSuperHeroPromise = null;
 
   const service = new SuperHeroService();
@@ -22,9 +22,9 @@
   }
 
   $: {
-    if (filters && filters.name) {
+    if (nameFilter) {
       superheroes = originalSuperHeroes.filter(
-        os => os.name.toUpperCase().indexOf(filters.name.toUpperCase()) !== -1
+        os => os.name.toUpperCase().indexOf(nameFilter.toUpperCase()) !== -1
       );
     } else {
       superheroes = originalSuperHeroes;
@@ -32,7 +32,7 @@
   }
 </script>
 
-<Filters on:filtersModified={event => (filters = event.detail.filters)} />
+<Filters bind:name={nameFilter} name={nameFilter} />
 <SuperHeroList {superheroes} on:superHeroSelected={getSuperHero} />
 
 {#await getSuperHeroPromise}
