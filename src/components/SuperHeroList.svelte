@@ -1,5 +1,12 @@
 <script>
+  import { createEventDispatcher } from "svelte";
+
   export let superheroes = [];
+
+  const dispatch = createEventDispatcher();
+  function notifySuperHeroSelected(id) {
+    dispatch("superHeroSelected", { id });
+  }
 
   const loaded = new Map();
   function lazy(node, data) {
@@ -37,7 +44,9 @@
 
 <ul>
   {#each superheroes as superhero (superhero.id)}
-    <div class="container">
+    <div
+      class="container"
+      on:click={() => notifySuperHeroSelected(superhero.id)}>
       <img
         class="picture"
         src="https://cdn.rawgit.com/akabab/superhero-api/0.2.0/api/images/sm/no-portrait.jpg"

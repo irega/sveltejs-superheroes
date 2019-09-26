@@ -3,13 +3,22 @@
   import SuperHeroList from "./SuperHeroList.svelte";
   import SuperHeroService from "../services/superhero-service";
   import Filters from "./Filters.svelte";
+  import SuperHeroDetail from "./SuperHeroDetail.svelte";
 
-  let superheroes, originalSuperHeroes, filters;
+  let superheroes,
+    originalSuperHeroes,
+    filters,
+    selectedSuperHero = null;
+
+  const service = new SuperHeroService();
 
   onMount(async () => {
-    let service = new SuperHeroService();
     superheroes = originalSuperHeroes = await service.getAll();
   });
+
+  async function setSelectedSuperHero(event) {
+    selectedSuperHero = await service.getById(event.detail.id);
+  }
 
   $: {
     if (filters && filters.name) {
@@ -23,4 +32,9 @@
 </script>
 
 <Filters on:filtersModified={event => (filters = event.detail.filters)} />
-<SuperHeroList {superheroes} />
+<SuperHeroList {superheroes} on:superHeroSelected={setSelectedSuperHero} />
+{#if selectedSuperHero !== null}
+  <SuperHeroDetail
+    {selectedSuperHero}
+    on:closeDetail={() => (selectedSuperHero = null)} />
+{/if}
