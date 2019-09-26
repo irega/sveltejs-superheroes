@@ -4,8 +4,8 @@
   export let superheroes = [];
 
   const dispatch = createEventDispatcher();
-  function notifySuperHeroSelected(id) {
-    dispatch("superHeroSelected", { id });
+  function notifySuperHeroSelected(id, createdFromApp) {
+    dispatch("superHeroSelected", { id, createdFromApp });
   }
 
   const loaded = new Map();
@@ -46,7 +46,7 @@
   {#each superheroes as superhero (superhero.id)}
     <div
       class="container"
-      on:click={() => notifySuperHeroSelected(superhero.id)}>
+      on:click={() => notifySuperHeroSelected(superhero.id, superhero.createdFromApp)}>
       <img
         class="picture"
         src="https://cdn.rawgit.com/akabab/superhero-api/0.2.0/api/images/sm/no-portrait.jpg"

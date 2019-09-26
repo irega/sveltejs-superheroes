@@ -4,7 +4,9 @@
   import SuperHeroService from "../../services/superhero-service";
   import Filters from "./Filters.svelte";
   import SuperHeroDetail from "./SuperHeroDetail.svelte";
+  import { default as SuperHeroDetailModel } from "../../models/SuperHeroDetail";
   import InformationModal from "./InformationModal.svelte";
+  import store from "../../store.js";
 
   let superheroes,
     originalSuperHeroes,
@@ -14,11 +16,31 @@
   const service = new SuperHeroService();
 
   onMount(async () => {
-    superheroes = originalSuperHeroes = await service.getAll();
+    if (!$store.superHeroes || $store.superHeroes.length === 0) {
+      superheroes = originalSuperHeroes = await service.getAll();
+      store.setSuperHeroes(superheroes);
+    } else {
+      superheroes = originalSuperHeroes = $store.superHeroes;
+    }
   });
 
   async function getSuperHero(event) {
-    getSuperHeroPromise = service.getById(event.detail.id);
+    if (event.detail.createdFromApp) {
+      getSuperHeroPromise = Promise.resolve(
+        getSuperHeroDetailFromStore(event.detail.id)
+      );
+    } else {
+      getSuperHeroPromise = service.getById(event.detail.id);
+    }
+  }
+
+  function getSuperHeroDetailFromStore(id) {
+    let detail = null;
+    const superHero = $store.superHeroes.find(s => s.id === id);
+    if (superHero) {
+      detail = new SuperHeroDetailModel(superHero.id, superHero.name);
+    }
+    return detail;
   }
 
   $: {

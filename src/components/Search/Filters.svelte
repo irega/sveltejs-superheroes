@@ -9,5 +9,5 @@
 
 </style>
 
-<input type="text" name="name" bind:value={name} />
+<input type="text"  bind:value={name} />
 <button on:click={clearFilters}>Clear</button>

@@ -1,11 +1,11 @@
 <script>
-  import { curRoute } from "../router.js";
+  import store from "../store.js";
   export let page = {
     path: "/search",
     name: "Search"
   };
   function redirectTo(event) {
-    curRoute.set(event.target.pathname);
+    store.setRoute(event.target.pathname);
     window.history.pushState(
       { path: page.path },
       "",
